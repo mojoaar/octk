@@ -91,52 +91,53 @@ func listTable(skills []internal.SkillEntry, verbose bool) error {
 	tw := terminalWidth()
 
 	numW := 4
-	nameW := 22
-	bodyW := tw - numW - 3 - nameW - 3
-	if bodyW < 20 {
-		bodyW = 20
+	nameW := 16
+	bodyW := tw - numW - 5 - nameW - 5
+	if bodyW < 30 {
+		bodyW = 30
 	}
-	srcW := bodyW * 40 / 100
-	descW := bodyW - srcW
-
-	showSourceHeader := "URL"
-	if verbose {
-		showSourceHeader = "Source"
-	}
+	urlW := bodyW * 20 / 100
+	srcW := bodyW * 25 / 100
+	descW := bodyW - urlW - srcW
 
 	fmt.Printf("Found %d skills:\n\n", len(skills))
 
 	dash := func(w int) string { return strings.Repeat("─", w) }
 
-	fmt.Printf("┌%s┬%s┬%s┬%s┐\n", dash(numW), dash(nameW), dash(srcW), dash(descW))
-	fmt.Printf("│%s│%s│%s│%s│\n",
+	fmt.Printf("┌%s┬%s┬%s┬%s┬%s┐\n", dash(numW), dash(nameW), dash(urlW), dash(srcW), dash(descW))
+	fmt.Printf("│%s│%s│%s│%s│%s│\n",
 		padRight("#", numW),
 		padRight("Name", nameW),
-		padRight(showSourceHeader, srcW),
+		padRight("URL", urlW),
+		padRight("Source", srcW),
 		padRight("Description", descW))
-	fmt.Printf("├%s┼%s┼%s┼%s┤\n", dash(numW), dash(nameW), dash(srcW), dash(descW))
+	fmt.Printf("├%s┼%s┼%s┼%s┼%s┤\n", dash(numW), dash(nameW), dash(urlW), dash(srcW), dash(descW))
 
 	for i, s := range skills {
 		name := truncateRunes(s.Name, nameW)
-		desc := truncateRunes(s.Description, descW)
+		url := ""
+		if s.SourceURL != "" {
+			url = shortenURL(s.SourceURL)
+		}
 		src := shortenPath(s.Source)
+		desc := truncateRunes(s.Description, descW)
 		if verbose {
 			name = s.Name
+			url = s.SourceURL
 			desc = s.Description
 		} else {
-			if s.SourceURL != "" {
-				src = shortenURL(s.SourceURL)
-			}
+			url = truncateRunes(url, urlW)
 			src = truncateRunes(src, srcW)
 		}
-		fmt.Printf("│%s│%s│%s│%s│\n",
+		fmt.Printf("│%s│%s│%s│%s│%s│\n",
 			padLeft(fmt.Sprintf("%d", i+1), numW),
 			padRight(name, nameW),
+			padRight(url, urlW),
 			padRight(src, srcW),
 			padRight(desc, descW))
 	}
 
-	fmt.Printf("└%s┴%s┴%s┴%s┘\n", dash(numW), dash(nameW), dash(srcW), dash(descW))
+	fmt.Printf("└%s┴%s┴%s┴%s┴%s┘\n", dash(numW), dash(nameW), dash(urlW), dash(srcW), dash(descW))
 
 	return nil
 }
