@@ -84,12 +84,12 @@ func listTable(skills []internal.SkillEntry, verbose bool) error {
 	tw := terminalWidth()
 
 	numW := 4
-	nameW := 30
+	nameW := 22
 	bodyW := tw - numW - 3 - nameW - 3 // │ separators and gaps
 	if bodyW < 20 {
 		bodyW = 20
 	}
-	srcW := bodyW * 3 / 10
+	srcW := bodyW * 40 / 100
 	descW := bodyW - srcW
 
 	if verbose {
