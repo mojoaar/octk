@@ -62,7 +62,7 @@ func frameline(content string) string {
 	if pad < 0 {
 		pad = 0
 	}
-	return "│ " + content + strings.Repeat(" ", pad) + " │"
+	return "│" + content + strings.Repeat(" ", pad) + "│"
 }
 
 func center(text string, width int) string {
