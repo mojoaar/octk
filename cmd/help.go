@@ -52,10 +52,6 @@ func PrintHelp() {
 	fmt.Println("  octk restore octk-skills-2026-06-28.tar.gz")
 }
 
-func displayWidth(s string) int {
-	return len([]rune(s))
-}
-
 func frameline(content string) string {
 	dw := displayWidth(content)
 	pad := innerWidth - dw

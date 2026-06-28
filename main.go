@@ -18,11 +18,13 @@ func main() {
 	case "help", "--help", "-h":
 		cmd.PrintHelp()
 
-	case "version", "--version", "-v":
+	case "version", "--version":
 		fmt.Printf("octk v%s\n", internal.ToolVersion)
 
 	case "list":
-		if err := cmd.List(); err != nil {
+		jsonOut := hasFlag("--json")
+		verbose := hasFlag("-v")
+		if err := cmd.List(jsonOut, verbose); err != nil {
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 			os.Exit(1)
 		}
@@ -44,8 +46,21 @@ func main() {
 		}
 
 	default:
+		if os.Args[1] == "-v" {
+			fmt.Printf("octk v%s\n", internal.ToolVersion)
+			return
+		}
 		fmt.Fprintf(os.Stderr, "unknown command: %s\n", os.Args[1])
 		fmt.Fprintln(os.Stderr, "run 'octk help' for usage")
 		os.Exit(1)
 	}
+}
+
+func hasFlag(flag string) bool {
+	for i := 2; i < len(os.Args); i++ {
+		if os.Args[i] == flag {
+			return true
+		}
+	}
+	return false
 }
