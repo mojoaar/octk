@@ -1,0 +1,17 @@
+# Binaries
+octk
+octk-*
+*.exe
+*.tar.gz
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Go
+*.test
+*.out
