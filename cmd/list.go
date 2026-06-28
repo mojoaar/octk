@@ -38,6 +38,13 @@ func terminalWidth() int {
 	return 80
 }
 
+func shortenURL(u string) string {
+	if prefix := "https://agentskill.sh/"; strings.HasPrefix(u, prefix) {
+		return u[len(prefix):]
+	}
+	return u
+}
+
 func shortenPath(path string) string {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -118,7 +125,7 @@ func listTable(skills []internal.SkillEntry, verbose bool) error {
 			desc = s.Description
 		} else {
 			if s.SourceURL != "" {
-				src = s.SourceURL
+				src = shortenURL(s.SourceURL)
 			}
 			src = truncateRunes(src, srcW)
 		}
