@@ -85,16 +85,16 @@ func listTable(skills []internal.SkillEntry, verbose bool) error {
 
 	numW := 4
 	nameW := 22
-	bodyW := tw - numW - 3 - nameW - 3 // │ separators and gaps
+	bodyW := tw - numW - 3 - nameW - 3
 	if bodyW < 20 {
 		bodyW = 20
 	}
 	srcW := bodyW * 40 / 100
 	descW := bodyW - srcW
 
+	showSourceHeader := "URL"
 	if verbose {
-		srcW = bodyW / 2
-		descW = bodyW - srcW
+		showSourceHeader = "Source"
 	}
 
 	fmt.Printf("Found %d skills:\n\n", len(skills))
@@ -105,7 +105,7 @@ func listTable(skills []internal.SkillEntry, verbose bool) error {
 	fmt.Printf("│%s│%s│%s│%s│\n",
 		padRight("#", numW),
 		padRight("Name", nameW),
-		padRight("Source", srcW),
+		padRight(showSourceHeader, srcW),
 		padRight("Description", descW))
 	fmt.Printf("├%s┼%s┼%s┼%s┤\n", dash(numW), dash(nameW), dash(srcW), dash(descW))
 
@@ -117,6 +117,9 @@ func listTable(skills []internal.SkillEntry, verbose bool) error {
 			name = s.Name
 			desc = s.Description
 		} else {
+			if s.SourceURL != "" {
+				src = s.SourceURL
+			}
 			src = truncateRunes(src, srcW)
 		}
 		fmt.Printf("│%s│%s│%s│%s│\n",

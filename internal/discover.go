@@ -136,6 +136,9 @@ func findSuperpowersSkills(home string) ([]SkillEntry, error) {
 				}
 				entry.Path = parent
 				entry.Source = "superpowers"
+				if entry.SourceURL == "" {
+					entry.SourceURL = extractRepoURL(pkg.Name())
+				}
 				results = append(results, entry)
 			}
 			return nil
@@ -231,14 +234,47 @@ func parseSkillFile(path string) (SkillEntry, error) {
 		setField(multilineKey, value, &name, &description)
 	}
 
-		if name == "" {
-			return SkillEntry{}, errNoName
-		}
+	if name == "" {
+		return SkillEntry{}, errNoName
+	}
+
+	sourceURL := extractSourceURL(content, end+6)
 
 	return SkillEntry{
 		Name:        name,
 		Description: description,
+		SourceURL:   sourceURL,
 	}, nil
+}
+
+func extractRepoURL(pkgName string) string {
+	idx := strings.Index(pkgName, "@git+")
+	if idx == -1 {
+		return ""
+	}
+	return pkgName[idx+1:]
+}
+
+func extractSourceURL(content string, offset int) string {
+	rest := content[offset:]
+	scanner := bufio.NewScanner(strings.NewReader(rest))
+	for scanner.Scan() {
+		line := scanner.Text()
+		if !strings.HasPrefix(line, "#") {
+			if strings.TrimSpace(line) != "" {
+				break
+			}
+			continue
+		}
+		if strings.HasPrefix(line, "# source: ") {
+			return strings.TrimSpace(line[len("# source: "):])
+		}
+		if strings.HasPrefix(line, "# slug: ") {
+			slug := strings.TrimSpace(line[len("# slug: "):])
+			return "https://agentskill.sh/" + slug
+		}
+	}
+	return ""
 }
 
 func setField(key, value string, name, description *string) {

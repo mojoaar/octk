@@ -6,6 +6,7 @@ type SkillEntry struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Source      string `json:"source"`
+	SourceURL   string `json:"source_url,omitempty"`
 	Path        string `json:"path"`
 }
 
