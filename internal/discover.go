@@ -156,12 +156,12 @@ func parseSkillFile(path string) (SkillEntry, error) {
 
 	content := string(data)
 	if !strings.HasPrefix(content, "---") {
-		return SkillEntry{}, err
+		return SkillEntry{}, errNoName
 	}
 
 	end := strings.Index(content[3:], "---")
 	if end == -1 {
-		return SkillEntry{}, err
+		return SkillEntry{}, errNoName
 	}
 
 	fm := content[3 : end+3]
@@ -183,7 +183,7 @@ func parseSkillFile(path string) (SkillEntry, error) {
 				continue
 			}
 			curIndent := len(line) - len(trimmed)
-			if curIndent <= indent || trimmed == "" {
+			if curIndent < indent {
 				value := joinMultiline(multilineStyle, multilineLines)
 				setField(multilineKey, value, &name, &description)
 				multilineKey = ""
@@ -193,6 +193,9 @@ func parseSkillFile(path string) (SkillEntry, error) {
 					continue
 				}
 			} else {
+				if len(multilineLines) == 0 {
+					indent = curIndent
+				}
 				multilineLines = append(multilineLines, trimmed)
 				continue
 			}
