@@ -52,14 +52,24 @@ func PrintHelp() {
 	fmt.Println("  octk restore octk-skills-2026-06-28.tar.gz")
 }
 
+func displayWidth(s string) int {
+	return len([]rune(s))
+}
+
 func frameline(content string) string {
-	return fmt.Sprintf("│ %-*s │", innerWidth, content)
+	dw := displayWidth(content)
+	pad := innerWidth - dw
+	if pad < 0 {
+		pad = 0
+	}
+	return "│ " + content + strings.Repeat(" ", pad) + " │"
 }
 
 func center(text string, width int) string {
-	if len(text) >= width {
+	dw := displayWidth(text)
+	if dw >= width {
 		return text
 	}
-	pad := (width - len(text)) / 2
+	pad := (width - dw) / 2
 	return strings.Repeat(" ", pad) + text
 }
